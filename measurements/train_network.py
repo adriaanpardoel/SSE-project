@@ -3,6 +3,8 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 import argparse
+import csv
+from dataclasses import dataclass
 
 
 def init_argparse():
@@ -43,6 +45,13 @@ def init_argparse():
     return parser
 
 
+@dataclass
+class TrainingResult:
+    iterations: int
+    train_score: float
+    test_score: float
+
+
 def train_network(dataset, hidden_layer_sizes, activation, solver, learning_rate):
     X = pd.DataFrame(dataset.data, columns=dataset.feature_names)
     y = dataset.target
@@ -60,9 +69,7 @@ def train_network(dataset, hidden_layer_sizes, activation, solver, learning_rate
     train_score = clf.score(X_train, y_train)
     test_score = clf.score(X_test, y_test)
 
-    print(f'Train score: {train_score}')
-    print(f'Test score: {test_score}')
-    print(f'{clf.n_iter_} iterations')
+    return TrainingResult(clf.n_iter_, train_score, test_score)
 
 
 if __name__ == '__main__':
@@ -76,4 +83,16 @@ if __name__ == '__main__':
         'breast_cancer': datasets.load_breast_cancer,
     }[args.dataset]()
 
-    train_network(dataset, tuple(args.hidden_layer_sizes), args.activation, args.solver, args.learning_rate)
+    res = train_network(dataset, tuple(args.hidden_layer_sizes), args.activation, args.solver, args.learning_rate)
+
+    if args.log_file:
+        with open(args.log_file, 'a+') as f:
+            writer = csv.writer(f)
+
+            f.seek(0)
+            if not f.read(1):
+                writer.writerow(['dataset', 'hidden_layer_sizes', 'activation', 'solver', 'learning_rate', 'iterations',
+                                 'train_score', 'test_score'])
+
+            writer.writerow([args.dataset, tuple(args.hidden_layer_sizes), args.activation, args.solver,
+                             args.learning_rate, res.iterations, res.train_score, res.test_score])
