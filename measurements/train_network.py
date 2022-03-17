@@ -9,7 +9,8 @@ from dataclasses import dataclass
 
 def init_argparse():
     parser = argparse.ArgumentParser(
-        usage='%(prog)s [OPTION] [FILE]...',
+        usage='%(prog)s [--dataset <dataset>] [--hidden-layer-sizes <hidden-layer-sizes>] [--activation <activation>] '
+              '[--solver <solver>] [--learning-rate <learning-rate>] [--log-file <log-file>]',
         description='Train a multi-layer perceptron classifier and log measurements.'
     )
 
