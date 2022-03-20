@@ -17,7 +17,7 @@ def init_argparse():
 
     parser.add_argument('--dataset',
                         help='the dataset to train on (default=iris)',
-                        choices=['iris', 'digits', 'wine', 'breast_cancer', 'olivetti','lfw', 'covertype', 'housing'],
+                        choices=['iris', 'digits', 'wine', 'breast_cancer', 'covertype', 'rcv1'],
                         default='iris')
 
     parser.add_argument('--hidden-layer-sizes',
@@ -78,7 +78,7 @@ if __name__ == '__main__':
         'wine': datasets.load_wine,
         'breast_cancer': datasets.load_breast_cancer,
         'covertype': datasets.fetch_covtype,
-        'housing': datasets.fetch_california_housing,
+        'rcv1': datasets.fetch_rcv1,
     }[args.dataset]()
 
     res = train_network(dataset, tuple(args.hidden_layer_sizes), args.activation, args.solver)
