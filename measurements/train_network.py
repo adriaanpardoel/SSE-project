@@ -6,8 +6,6 @@ import argparse
 import csv
 from datetime import datetime
 from dataclasses import dataclass
-from sklearn.datasets import fetch_covtype, fetch_california_housing
-
 
 
 def init_argparse():
@@ -79,8 +77,8 @@ if __name__ == '__main__':
         'digits': datasets.load_digits,
         'wine': datasets.load_wine,
         'breast_cancer': datasets.load_breast_cancer,
-        'covertype': fetch_covtype,
-        'housing': fetch_california_housing,      
+        'covertype': datasets.fetch_covtype,
+        'housing': datasets.fetch_california_housing,
     }[args.dataset]()
 
     res = train_network(dataset, tuple(args.hidden_layer_sizes), args.activation, args.solver)
