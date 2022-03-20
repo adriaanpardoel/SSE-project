@@ -5,7 +5,7 @@ from sklearn.neural_network import MLPClassifier
 import argparse
 import csv
 from dataclasses import dataclass
-from sklearn.datasets import fetch_covtype, fetch_california_housing
+from sklearn.datasets import fetch_covtype, fetch_rcv1
 
 
 
@@ -18,7 +18,7 @@ def init_argparse():
 
     parser.add_argument('--dataset',
                         help='the dataset to train on (default=iris)',
-                        choices=['iris', 'digits', 'wine', 'breast_cancer', 'olivetti','lfw', 'covertype', 'housing'],
+                        choices=['iris', 'digits', 'wine', 'breast_cancer', 'covertype', 'rcv1'],
                         default='iris')
 
     parser.add_argument('--hidden-layer-sizes',
@@ -85,7 +85,7 @@ if __name__ == '__main__':
         'wine': datasets.load_wine,
         'breast_cancer': datasets.load_breast_cancer,
         'covertype': fetch_covtype,
-        'housing': fetch_california_housing,      
+        'rcv1': fetch_rcv1,
     }[args.dataset]()
 
     res = train_network(dataset, tuple(args.hidden_layer_sizes), args.activation, args.solver, args.learning_rate)
