@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 import argparse
 import csv
+from datetime import datetime
 from dataclasses import dataclass
 from sklearn.datasets import fetch_covtype, fetch_california_housing
 
@@ -38,11 +39,6 @@ def init_argparse():
                         choices=['lbfgs', 'sgd', 'adam'],
                         default='adam')
 
-    parser.add_argument('--learning-rate',
-                        help='learning rate schedule for weight updates (default=constant)',
-                        choices=['constant', 'invscaling', 'adaptive'],
-                        default='constant')
-
     parser.add_argument('--log-file', help='file to log measurements to')
 
     return parser
@@ -55,7 +51,7 @@ class TrainingResult:
     test_score: float
 
 
-def train_network(dataset, hidden_layer_sizes, activation, solver, learning_rate):
+def train_network(dataset, hidden_layer_sizes, activation, solver):
     X = pd.DataFrame(dataset.data, columns=dataset.feature_names)
     y = dataset.target
 
@@ -66,7 +62,6 @@ def train_network(dataset, hidden_layer_sizes, activation, solver, learning_rate
         hidden_layer_sizes=hidden_layer_sizes,
         activation=activation,
         solver=solver,
-        learning_rate=learning_rate
     ).fit(X_train, y_train)
 
     train_score = clf.score(X_train, y_train)
@@ -88,7 +83,7 @@ if __name__ == '__main__':
         'housing': fetch_california_housing,      
     }[args.dataset]()
 
-    res = train_network(dataset, tuple(args.hidden_layer_sizes), args.activation, args.solver, args.learning_rate)
+    res = train_network(dataset, tuple(args.hidden_layer_sizes), args.activation, args.solver)
 
     if args.log_file:
         with open(args.log_file, 'a+') as f:
@@ -96,8 +91,9 @@ if __name__ == '__main__':
 
             f.seek(0)
             if not f.read(1):
-                writer.writerow(['dataset', 'hidden_layer_sizes', 'activation', 'solver', 'learning_rate', 'iterations',
-                                 'train_score', 'test_score'])
+                writer.writerow(['timestamp', 'dataset', 'n_samples', 'n_dimensions', 'n_classes', 'hidden_layer_sizes',
+                                 'activation', 'solver', 'iterations', 'train_score', 'test_score'])
 
-            writer.writerow([args.dataset, tuple(args.hidden_layer_sizes), args.activation, args.solver,
-                             args.learning_rate, res.iterations, res.train_score, res.test_score])
+            writer.writerow([datetime.now().isoformat(), args.dataset, len(dataset.data), len(dataset.feature_names),
+                             len(set(dataset.target)), tuple(args.hidden_layer_sizes), args.activation, args.solver,
+                             res.iterations, res.train_score, res.test_score])
