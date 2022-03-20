@@ -2,17 +2,18 @@ start /d "%PROGRAMFILES%"\Intel\"Power Gadget 3.6"\ IntelPowerGadget.exe
 
 timeout 5
 
-:: dataset: iris, digits, wine, breast_cancer
+:: dataset: covertype, housing
 :: activation: identity, logistic, tanh, relu
 :: solver: lbfgs, sgd, adam
-:: learning-rate: constant, invscaling, adaptive
+:: hidden layer size: 100 , 500, 1000
+:: number of layers: 1 2 3
 
-for %%w in (iris, digits, wine, breast_cancer) do (
+for %%w in (covertype, housing) do (
 	for %%x in (identity, logistic, tanh, relu) do (
 		for %%y in (lbfgs, sgd, adam) do (
-			for %%z in (constant, invscaling, adaptive) do (
+			for %%z in (100, 500, 1000) do (
 				"%PROGRAMFILES%"\Intel\"Power Gadget 3.6"\IntelPowerGadget.exe -start
-				python train_network.py --dataset %%w --hidden-layer-sizes 100 --activation %%x --solver %%y --learning-rate %%z --log-file result.csv
+				python train_network.py --dataset %%w --hidden-layer-sizes %%z --activation %%x --solver %%y  --log-file result.csv
 				"%PROGRAMFILES%"\Intel\"Power Gadget 3.6"\IntelPowerGadget.exe -stop
 				timeout 5
 			)
