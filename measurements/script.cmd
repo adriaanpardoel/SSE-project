@@ -9,7 +9,7 @@ timeout 5
 
 
 echo 1 Layer
-for %%w in (iris, digit, covertype, rcv1) do (
+for %%w in (iris, digits, covertype, rcv1) do (
 	for %%x in (identity, logistic, tanh, relu) do (
 		for %%y in (lbfgs, sgd, adam) do (
 			for %%z in (100, 500, 1000) do (
@@ -23,7 +23,7 @@ for %%w in (iris, digit, covertype, rcv1) do (
 )
 
 echo 2 Layers
-for %%w in (iris, digit, covertype, rcv1) do (
+for %%w in (iris, digits, covertype, rcv1) do (
 	for %%x in (identity, logistic, tanh, relu) do (
 		for %%y in (lbfgs, sgd, adam) do (
 			for %%z in (100, 500, 1000) do (
@@ -37,7 +37,7 @@ for %%w in (iris, digit, covertype, rcv1) do (
 )
 
 echo 3 Layers
-for %%w in (iris, digit, covertype, rcv1) do (
+for %%w in (iris, digits, covertype, rcv1) do (
 	for %%x in (identity, logistic, tanh, relu) do (
 		for %%y in (lbfgs, sgd, adam) do (
 			for %%z in (100, 500, 1000) do (
