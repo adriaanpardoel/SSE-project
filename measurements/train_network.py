@@ -6,7 +6,7 @@ import argparse
 import csv
 from datetime import datetime
 from dataclasses import dataclass
-from sklearn.datasets import make_blobs
+from sklearn.datasets import make_classification
 
 
 def init_argparse():
@@ -66,7 +66,7 @@ class TrainingResult:
 
 
 def train_network(hidden_layer_sizes, activation, solver, samples, features, classes ):
-    X, y = make_blobs(n_samples=samples, n_features=features, random_state=0, centers=classes)
+    X, y = make_classification(n_samples=0.6*samples, n_features=features, random_state=0, classes=classes, n_repeated=0.2*samples, n_redundant=0.2*samples)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=1)
 
