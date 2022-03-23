@@ -12,7 +12,7 @@ echo 1 Layer
 for %%w in (iris, digits, covertype, rcv1) do (
 	for %%x in (identity, logistic, tanh, relu) do (
 		for %%y in (lbfgs, sgd, adam) do (
-			for %%z in (100, 500, 1000) do (
+			for %%z in (100, 200, 500) do (
 				"%PROGRAMFILES%"\Intel\"Power Gadget 3.6"\IntelPowerGadget.exe -start
 				python train_network.py --dataset %%w --hidden-layer-sizes %%z --activation %%x --solver %%y  --log-file result.csv
 				"%PROGRAMFILES%"\Intel\"Power Gadget 3.6"\IntelPowerGadget.exe -stop
@@ -26,7 +26,7 @@ echo 2 Layers
 for %%w in (iris, digits, covertype, rcv1) do (
 	for %%x in (identity, logistic, tanh, relu) do (
 		for %%y in (lbfgs, sgd, adam) do (
-			for %%z in (100, 500, 1000) do (
+			for %%z in (100, 200, 500) do (
 				"%PROGRAMFILES%"\Intel\"Power Gadget 3.6"\IntelPowerGadget.exe -start
 				python train_network.py --dataset %%w --hidden-layer-sizes %%z %%z --activation %%x --solver %%y  --log-file result.csv
 				"%PROGRAMFILES%"\Intel\"Power Gadget 3.6"\IntelPowerGadget.exe -stop
@@ -40,7 +40,7 @@ echo 3 Layers
 for %%w in (iris, digits, covertype, rcv1) do (
 	for %%x in (identity, logistic, tanh, relu) do (
 		for %%y in (lbfgs, sgd, adam) do (
-			for %%z in (100, 500, 1000) do (
+			for %%z in (100, 200, 500) do (
 				"%PROGRAMFILES%"\Intel\"Power Gadget 3.6"\IntelPowerGadget.exe -start
 				python train_network.py --dataset %%w --hidden-layer-sizes %%z %%z %%z --activation %%x --solver %%y  --log-file result.csv
 				"%PROGRAMFILES%"\Intel\"Power Gadget 3.6"\IntelPowerGadget.exe -stop
