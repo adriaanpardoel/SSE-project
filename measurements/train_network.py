@@ -1,5 +1,4 @@
 import pandas as pd
-from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 import argparse
@@ -7,6 +6,7 @@ import csv
 from datetime import datetime
 from dataclasses import dataclass
 from sklearn.datasets import make_classification
+import math
 
 
 def init_argparse():
@@ -15,11 +15,6 @@ def init_argparse():
               '[--solver <solver>] [--learning-rate <learning-rate>] [--log-file <log-file>]',
         description='Train a multi-layer perceptron classifier and log measurements.'
     )
-
-    parser.add_argument('--dataset',
-                        help='the dataset to train on (default=iris)',
-                        choices=['iris', 'digits', 'wine', 'breast_cancer', 'covertype', 'rcv1', 'lfw'],
-                        default='iris')
 
     parser.add_argument('--hidden-layer-sizes',
                         help='the number of neurons per hidden layer, such that the ith argument represents the number'
@@ -44,8 +39,8 @@ def init_argparse():
                         type=int)
                         
     parser.add_argument('--features',
-                        help='total number of features (default=5)',
-                        default=5,
+                        help='total number of features (default=20)',
+                        default=20,
                         type=int)   
 
     parser.add_argument('--classes',
@@ -65,8 +60,12 @@ class TrainingResult:
     test_score: float
 
 
-def train_network(hidden_layer_sizes, activation, solver, samples, features, classes ):
-    X, y = make_classification(n_samples=0.6*samples, n_features=features, random_state=0, n_classes=classes, n_repeated=0.2*samples, n_redundant=0.2*samples)
+def train_network(hidden_layer_sizes, activation, solver, samples, features, classes):
+    n_redundant = math.floor(0.1*features)
+    n_repeated  = math.floor(0.1*features)
+    n_informative = math.floor(0.7*features)
+    
+    X, y = make_classification(n_samples=samples, n_classes=classes, n_features=features, random_state=0, n_informative=n_informative, n_repeated=n_repeated, n_redundant=n_redundant)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=1)
 
@@ -86,8 +85,7 @@ if __name__ == '__main__':
     parser = init_argparse()
     args = parser.parse_args()
 
-
-    res = train_network(tuple(args.hidden_layer_sizes), args.activation, args.solver, args.samples, args.features, args.classes)
+    res = train_network(tuple(args.hidden_layer_sizes), args.activation, args.solver, args.samples, args.features, args.classes )
 
     if args.log_file:
         with open(args.log_file, 'a+') as f:
