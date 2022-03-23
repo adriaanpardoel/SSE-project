@@ -6,6 +6,7 @@ import argparse
 import csv
 from datetime import datetime
 from dataclasses import dataclass
+from sklearn.datasets import make_blobs
 
 
 def init_argparse():
@@ -17,7 +18,7 @@ def init_argparse():
 
     parser.add_argument('--dataset',
                         help='the dataset to train on (default=iris)',
-                        choices=['iris', 'digits', 'wine', 'breast_cancer', 'covertype', 'rcv1'],
+                        choices=['iris', 'digits', 'wine', 'breast_cancer', 'covertype', 'rcv1', 'lfw'],
                         default='iris')
 
     parser.add_argument('--hidden-layer-sizes',
@@ -36,7 +37,22 @@ def init_argparse():
                         help='the solver for weight optimization (default=adam)',
                         choices=['lbfgs', 'sgd', 'adam'],
                         default='adam')
+                        
+    parser.add_argument('--samples',
+                        help='total number of samples (default=100)',
+                        default=100,
+                        type=int)
+                        
+    parser.add_argument('--features',
+                        help='total number of features (default=5)',
+                        default=5,
+                        type=int)   
 
+    parser.add_argument('--classes',
+                        help='total number of classes (default=3)',
+                        default=3,
+                        type=int)   
+                        
     parser.add_argument('--log-file', help='file to log measurements to')
 
     return parser
@@ -49,9 +65,8 @@ class TrainingResult:
     test_score: float
 
 
-def train_network(dataset, hidden_layer_sizes, activation, solver):
-    X = pd.DataFrame(dataset.data, columns=dataset.feature_names)
-    y = dataset.target
+def train_network(hidden_layer_sizes, activation, solver, samples, features, classes ):
+    X, y = make_blobs(n_samples=samples, n_features=features, random_state=0, centers=classes)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=1)
 
@@ -67,21 +82,12 @@ def train_network(dataset, hidden_layer_sizes, activation, solver):
 
     return TrainingResult(clf.n_iter_, train_score, test_score)
 
-
 if __name__ == '__main__':
     parser = init_argparse()
     args = parser.parse_args()
 
-    dataset = {
-        'iris': datasets.load_iris,
-        'digits': datasets.load_digits,
-        'wine': datasets.load_wine,
-        'breast_cancer': datasets.load_breast_cancer,
-        'covertype': datasets.fetch_covtype,
-        'rcv1': datasets.fetch_rcv1,
-    }[args.dataset]()
 
-    res = train_network(dataset, tuple(args.hidden_layer_sizes), args.activation, args.solver)
+    res = train_network(tuple(args.hidden_layer_sizes), args.activation, args.solver, args.samples, args.features, args.classes)
 
     if args.log_file:
         with open(args.log_file, 'a+') as f:
@@ -89,9 +95,9 @@ if __name__ == '__main__':
 
             f.seek(0)
             if not f.read(1):
-                writer.writerow(['timestamp', 'dataset', 'n_samples', 'n_dimensions', 'n_classes', 'hidden_layer_sizes',
+                writer.writerow(['timestamp', 'n_samples', 'n_features', 'hidden_layer_sizes', 'classes',
                                  'activation', 'solver', 'iterations', 'train_score', 'test_score'])
 
-            writer.writerow([datetime.now().isoformat(), args.dataset, len(dataset.data), len(dataset.feature_names),
-                             len(set(dataset.target)), tuple(args.hidden_layer_sizes), args.activation, args.solver,
+            writer.writerow([datetime.now().isoformat(), args.samples, args.features,
+                             tuple(args.hidden_layer_sizes), args.classes, args.activation, args.solver,
                              res.iterations, res.train_score, res.test_score])
