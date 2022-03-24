@@ -45,7 +45,6 @@ def sort_pwrdata(data):
     
     
 def read_PwrData(path):
-    pwrdata = list()
     data = dict()
     for file in os.listdir(path):
         if file.endswith('.csv'):
@@ -56,13 +55,9 @@ def read_PwrData(path):
                 time = dt.time(int(time[0]), int(time[1]), int(time[2]))
                 for line in text:
                     if line.startswith('Average Processor Power'):
-                        APP = line.split('=')[1]
-                        data[time] = APP
-                        pwrdata.append(APP)
+                        data[time] = line.split('=')[1]                      
                         
-    pwrdata = sort_pwrdata(data)
-                        
-    return pwrdata                        
+    return sort_pwrdata(data)                       
                 
             
 def read_results(path):
@@ -93,6 +88,14 @@ def split_hidden_layers_sizes(df):
     
     return df
     
+def add_score(df):
+    df = df.sort_values(by=['average processor power'])
+    n = len(df['average processor power'])
+    scores = list(range(10, n+10))
+    df['score']=scores
+    return df
+    
+    
 if __name__ == '__main__':
     parser = init_argparse()
     args = parser.parse_args()  
@@ -110,8 +113,10 @@ if __name__ == '__main__':
             os.exit()
         
         results = read_results(results_path)
+        results['system'] = os.path.basename(path) 
         results = split_hidden_layers_sizes(results)
-        results['pwrdata'] = read_PwrData(pwrdata_path)
+        results['average processor power'] = read_PwrData(pwrdata_path)
+        results = add_score(results)
         data.append(results)
         
     all_data = data[0]
