@@ -1,3 +1,4 @@
+timestamp,n_samples,n_features,hidden_layer_sizes,classes,activation,solver,iterations,train_score,test_score
 
 2022-03-23T17:47:19.258137,1000,20,"(100,)",2,relu,adam,200,0.9973333333333333,0.888
 2022-03-23T17:47:26.236607,1000,20,"(200,)",2,relu,adam,200,1.0,0.904
