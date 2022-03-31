@@ -108,6 +108,9 @@ def add_cost(df):
     df['cost'] = df['energy'] / baseline_cost
     return df
 
+def add_avg_iteration_cost(df):
+    df['avg_iteration_energy'] = df['energy']/df['iterations']
+    return df
 
 if __name__ == '__main__':
     parser = init_argparse()
@@ -129,6 +132,7 @@ if __name__ == '__main__':
         results['system'] = os.path.basename(path)
         results = split_hidden_layers_sizes(results)
         results['energy'] = read_PwrData(pwrdata_path)
+        results = add_avg_iteration_cost(results)
         results = add_cost(results)
         data.append(results)
 

@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.neural_network import MLPRegressor
 import matplotlib.pyplot as plt
+from sklearn.feature_selection import f_regression, SelectKBest, r_regression
 
 
 def init_argparse():
@@ -34,13 +35,27 @@ def preprocess(df):
     del df['energy']
     del df['activation']
     del df['solver']
+    del df['iterations']
+    del df['avg_iteration_energy']
 
     return df
+    
+def compute_regression(X, y):
+    # feature selection
+    f_selector = SelectKBest(score_func=r_regression, k='all')
+    # learn relationship from training data
+    f_selector.fit(X, y)
+    
+    print(list(X.columns.values))
+
+    print(f_selector.scores_)
 
 
 def train_model(df, mlp=False, degree=1, hidden_layer_sizes=(10,)):
     X = df.drop(['cost'], axis=1)
     y = df['cost']
+    
+    compute_regression(X, y)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1)
 
