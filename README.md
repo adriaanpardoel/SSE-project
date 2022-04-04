@@ -5,7 +5,7 @@ This code repository is part of the paper [Static Estimation of Energy Cost for
 scikit-learn Models](https://www.overleaf.com/read/qmjhdybsrfzr) and contains
 all the scripts to reproduce the results.
 It is required to use Windows in order for everything to work.
-Also make sure to have[Intel Power Gadget](https://www.intel.com/content/www/us/en/developer/articles/tool/power-gadget.html)
+Also make sure to have [Intel Power Gadget](https://www.intel.com/content/www/us/en/developer/articles/tool/power-gadget.html)
 installed.
 
 ## Reproducing the results
