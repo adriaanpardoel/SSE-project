@@ -23,3 +23,14 @@ For reproduction of the results in the paper, use the data from the `Results` fo
 
 3. Train the model with [regression.py](/analysis/regression.py). 
 For reproduction of the results in the paper, use [out.csv](/analysis/out.csv).
+
+## Contributing
+
+If you'd like to make a contribution to this project, please fork the repository and submit a pull request with your changes.
+
+Possible ways to contribute to the project include but are not limited to:
+* Collecting more data
+* Use real datasets instead of artificial ones
+* Consider more hyperparameters
+* Take the idle energy consumption into account
+* Extend the scope beyond MLP classifiers
