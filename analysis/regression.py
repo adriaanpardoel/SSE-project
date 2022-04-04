@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.neural_network import MLPRegressor
 import matplotlib.pyplot as plt
-from sklearn.feature_selection import f_regression, SelectKBest, r_regression
+from sklearn.feature_selection import SelectKBest, r_regression
 
 
 def init_argparse():
@@ -39,7 +39,8 @@ def preprocess(df):
     del df['avg_iteration_energy']
 
     return df
-    
+
+
 def compute_regression(X, y):
     # feature selection
     f_selector = SelectKBest(score_func=r_regression, k='all')
@@ -51,7 +52,7 @@ def compute_regression(X, y):
     print(f_selector.scores_)
 
 
-def train_model(df, mlp=False, degree=1, hidden_layer_sizes=(10,)):
+def train_model(df, mlp=False, degree=1, hidden_layer_sizes=(10,), ax=None, ax_title=None):
     X = df.drop(['cost'], axis=1)
     y = df['cost']
     
@@ -64,19 +65,21 @@ def train_model(df, mlp=False, degree=1, hidden_layer_sizes=(10,)):
 
     model.fit(X_train, y_train)
 
-    predictions = model.predict(X)
-    r2 = r2_score(y, predictions)
-    rmse = mean_squared_error(y, predictions, squared=False)
-    err_var = np.var(y - predictions)
+    predictions = model.predict(X_test)
+    r2 = r2_score(y_test, predictions)
+    rmse = mean_squared_error(y_test, predictions, squared=False)
+    err_var = np.var(y_test - predictions)
 
     print('The r2 is: ', r2)
     print('The rmse is: ', rmse)
     print('The error variance is: ', err_var)
 
-    plt.scatter(y, predictions)
-    plt.plot(range(14), range(14))
-    plt.gca().set_aspect('equal', adjustable='box')
-    plt.show()
+    ax.scatter(y_test, predictions)
+    ax.plot(range(14), range(14), color='red')
+    ax.set_xlabel('true cost')
+    ax.set_ylabel('predicted cost')
+    ax.set_title(ax_title)
+    plt.axis('scaled')
 
 
 def find_mlp_config(max_layers=2, max_layer_size=20):
@@ -108,4 +111,15 @@ if __name__ == '__main__':
     df = pd.read_csv(args.data)
     df = preprocess(df)
 
-    train_model(df, mlp=False, degree=2, hidden_layer_sizes=(18, 6))
+    fig = plt.figure(figsize=[19.2, 9.6])
+
+    ax = fig.add_subplot(131)
+    train_model(df, mlp=False, degree=1, hidden_layer_sizes=(9, 2, 7), ax=ax, ax_title='Linear')
+
+    ax = fig.add_subplot(132)
+    train_model(df, mlp=False, degree=3, hidden_layer_sizes=(9, 2, 7), ax=ax, ax_title='Cubic')
+
+    ax = fig.add_subplot(133)
+    train_model(df, mlp=True, degree=1, hidden_layer_sizes=(9, 2, 7), ax=ax, ax_title='MLP')
+
+    plt.show()
